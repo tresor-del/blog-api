@@ -20,4 +20,8 @@ def read_article(article: Article):
         raise HTTPException(status_code=400, detail='Id already exits')
     articles.append(article.dict())
     save_article(articles)
-    return article
+    return articles
+
+@app.get("/healthz")
+async def health_check():
+    return {"status": "ok"}
