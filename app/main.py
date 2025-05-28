@@ -1,27 +1,28 @@
-from app.models import Article
-from app.utils import read_articles, save_article
+from fastapi import FastAPI
+from .routers import articles
+from .config.cors import setup_cors
+from fastapi.middleware.cors import CORSMiddleware
+from app.config.settings import settings
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List
-import json
 
 app = FastAPI()
 
+setup_cors(app)
 
-@app.get('/articles', response_model=List[Article])
-def get_articles():
-    return read_articles()
+@app.include_router(articles.router)
 
-@app.post('/articles', response_model=Article)
-def read_article(article: Article):
-    articles = read_articles()
-    if any(a['id'] == article.id for a in articles):
-        raise HTTPException(status_code=400, detail='Id already exits')
-    articles.append(article.dict())
-    save_article(articles)
-    return articles
+@app.get('/')
+async def root():
+    return {'message': 'Blog api app'}
 
 @app.get("/healthz")
 async def health_check():
     return {"status": "ok"}
+
+@app.get("/config-check")
+def config_check():
+    return {
+        "env": settings.env,
+        "debug": settings.debug,
+        "origins": settings.allowed_origins
+    }
