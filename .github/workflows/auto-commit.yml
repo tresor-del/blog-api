@@ -1,0 +1,26 @@
+name: Auto commit change
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          -persist-credentials: false
+      - name: Configure Git
+        run: |
+          git config user.name 'github-actions'
+          git config user.email 'actions@github.com'
+      - name: Make change on run scripts
+        run: |
+          echo 'Update at $(date)' >> auto-update.txt
+          git add auto-update.txt
+          git commit -m 'Auto update file at $(date)' || 'No changes to commit'
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+         github_token: ${{ secret.GITHUB_TOKEN }}
