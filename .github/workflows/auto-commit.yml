@@ -7,46 +7,46 @@ on:
   schedule:
     - cron: '0 2 * * *'
 
-
 jobs:
   auto-commit:
     runs-on: ubuntu-latest
 
-
     steps:
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           persist-credentials: false
-
 
       - name: Configure Git
         run: |
           git config user.name 'github-actions'
           git config user.email 'actions@github.com'
 
-
       - name: Pull latest changes
         run: |
           git pull origin main --rebase || echo 'Nothing to rebase'
 
-
       - name: Make change on run scripts
         run: |
-          echo 'Update at $(date)' >> auto-update.txt
+          DATE=$(date "+%Y-%m-%d")
+          echo "## [$DATE]" >> CHANGELOG.md
+          echo "- Auto update at $DATE" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          echo "Update at $DATE" >> auto-update.txt
 
       - name: Commit if there are changes
         run: |
-          git add CHANGELOG.md
+          git add CHANGELOG.md auto-update.txt
           if ! git diff --cached --quiet; then
-            git commit -m "Changelog auto update at $(date)"
+            git commit -m "Auto update at $(date)"
           else
             echo "No changes to commit."
           fi
 
-          
       - name: Push changes
         if: success()
         uses: ad-m/github-push-action@v0.6.0
         with:
-         github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
