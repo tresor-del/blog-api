@@ -14,3 +14,6 @@ Toutes les modifications notables pour ce projet seront documentées ici.
 ### Added
 - Première version publique de l’application.
 - Fonctionnalités : Créer, avoir une liste des articles crées.
+## [2025-05-29]
+- Auto update at 2025-05-29
+
