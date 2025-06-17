@@ -8,6 +8,6 @@ class Settings(BaseSettings):
     allowed_origins: List[str]  
 
     class Config:
-        env_file = os.getenv('ENV_FILE', '.env.dev')
+        env_file = os.getenv('ENV_FILE', '.env.prod')
 
 settings = Settings()
