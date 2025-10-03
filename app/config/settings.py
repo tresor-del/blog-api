@@ -1,13 +1,15 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 import os
 
 class Settings(BaseSettings):
-    env: str
-    debug: bool
-    allowed_origins: List[str]  
+    model_config = SettingsConfigDict(
+        env_file= ".env.dev"
+    )
 
-    class Config:
-        env_file = os.getenv('ENV_FILE', '.env.prod')
+    DEBUG: bool = True
+    ALLOWED_ORIGINS: List[str] = ["*"]
+    DATABASE_URL: str = "sqlite:///./test.db"
+
 
 settings = Settings()

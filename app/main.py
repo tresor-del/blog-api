@@ -1,15 +1,15 @@
 from fastapi import FastAPI
-from .routers import articles
-from .config.cors import setup_cors
-from fastapi.middleware.cors import CORSMiddleware
+
+from app.config.cors import setup_cors
 from app.config.settings import settings
+from app.api.main import api_router
 
 
 app = FastAPI()
 
 setup_cors(app)
 
-@app.include_router(articles.router)
+app.include_router(api_router)
 
 @app.get('/')
 async def root():
@@ -22,7 +22,6 @@ async def health_check():
 @app.get("/config-check")
 def config_check():
     return {
-        "env": settings.env,
-        "debug": settings.debug,
-        "origins": settings.allowed_origins
+        "DEBUG": settings.DEBUG,
+        "ORIGINS": settings.ALLOWED_ORIGINS
     }
